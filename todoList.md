@@ -1,0 +1,3 @@
+- [o] Write OpenAPI doc for API behavior and Schema
+- [ ] Create spring project
+- [ ] Define MongoDB Schema
