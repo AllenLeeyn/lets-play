@@ -1,3 +1,3 @@
 - [o] Write OpenAPI doc for API behavior and Schema
-- [ ] Create spring project
+- [o] Create initial spring project
 - [ ] Define MongoDB Schema
