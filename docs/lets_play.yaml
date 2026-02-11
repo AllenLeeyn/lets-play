@@ -6,6 +6,7 @@ info:
     Manages users and products with JWT-based authentication and role-based access control.
     - **Admin**: manage all users and products
     - **User**: manage only their own products
+    Identifiers for users and products are **MongoDB ObjectIds** (24-character hex strings).
   version: 1.0.0
 
 servers:
@@ -16,7 +17,7 @@ tags:
   - name: Auth
     description: Registration and login
   - name: Users
-    description: User management (admin only)
+    description: User management
   - name: Products
     description: Product catalog and management
 
@@ -148,7 +149,7 @@ paths:
     get:
       tags: [Users]
       summary: Get user by ID
-      description: Admin only.
+      description: Admin or self only.
       operationId: getUserById
       security:
         - bearerAuth: []
@@ -168,11 +169,12 @@ paths:
     put:
       tags: [Users]
       summary: Update user
-      description: Admin only.
+      description: Admin or self only.
       operationId: updateUser
       security:
         - bearerAuth: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -228,9 +230,10 @@ paths:
       parameters:
         - name: userId
           in: query
-          description: Filter by owner user ID (optional)
+          description: Filter by owner user ID (MongoDB ObjectId, optional)
           schema:
             type: string
+            pattern: '^[a-fA-F0-9]{24}$'
         - name: page
           in: query
           schema:
@@ -246,13 +249,11 @@ paths:
             default: 20
       responses:
         '200':
-          description: List of products
+          description: Paginated list of products
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Product'
+                $ref: '#/components/schemas/Products'
 
     post:
       tags: [Products]
@@ -308,6 +309,7 @@ paths:
       security:
         - bearerAuth: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -361,16 +363,18 @@ components:
       name: id
       in: path
       required: true
-      description: User ID
+      description: User ID (MongoDB ObjectId, 24 hex characters)
       schema:
         type: string
+        pattern: '^[a-fA-F0-9]{24}$'
     ProductId:
       name: id
       in: path
       required: true
-      description: Product ID
+      description: Product ID (MongoDB ObjectId, 24 hex characters)
       schema:
         type: string
+        pattern: '^[a-fA-F0-9]{24}$'
 
   responses:
     Unauthorized:
@@ -426,7 +430,8 @@ components:
       properties:
         id:
           type: string
-          description: Unique identifier
+          description: Unique identifier (MongoDB ObjectId)
+          pattern: '^[a-fA-F0-9]{24}$'
         name:
           type: string
         email:
@@ -474,6 +479,7 @@ components:
 
     UserUpdate:
       type: object
+      description: At least one field must be provided for PUT /users/{id}.
       properties:
         name:
           type: string
@@ -489,11 +495,40 @@ components:
           type: string
           enum: [USER, ADMIN]
 
+    Products:
+      type: object
+      description: Paginated response for GET /products.
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+          description: Products on this page
+        totalElements:
+          type: integer
+          minimum: 0
+          description: Total number of products across all pages
+        totalPages:
+          type: integer
+          minimum: 0
+          description: Total number of pages
+        size:
+          type: integer
+          minimum: 1
+          description: Page size (same as query param)
+        number:
+          type: integer
+          minimum: 0
+          description: Zero-based page index (same as query param)
+      required: [content, totalElements, totalPages, size, number]
+
     Product:
       type: object
       properties:
         id:
           type: string
+          description: Unique identifier (MongoDB ObjectId)
+          pattern: '^[a-fA-F0-9]{24}$'
         name:
           type: string
         description:
@@ -507,7 +542,8 @@ components:
           minimum: 0
         userId:
           type: string
-          description: ID of the user who owns this product
+          description: ID of the user who owns this product (MongoDB ObjectId)
+          pattern: '^[a-fA-F0-9]{24}$'
       required: [id, name, price, quantity, userId]
 
     ProductCreate:
@@ -529,6 +565,7 @@ components:
 
     ProductUpdate:
       type: object
+      description: At least one field must be provided for PUT /products/{id}.
       properties:
         name:
           type: string
