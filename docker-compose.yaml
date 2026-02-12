@@ -1,0 +1,16 @@
+# Let's Play – local development
+# Run MongoDB for the API. Start the API from the host (e.g. ./mvnw spring-boot:run).
+# Usage: docker compose up -d
+
+services:
+  mongodb:
+    image: mongodb/mongodb-community-server:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:
