@@ -3,10 +3,11 @@
 ## Setup
 - [x] Write OpenAPI doc for API behavior and schema
 - [x] Create initial Spring project
-- [ ] MongoDB Community Docker
+- [x] MongoDB Community Docker
 
 ## Schema
-- [ ] Define MongoDB entities (User, Product)
+- [x] Define MongoDB entities (User, Product)
+- [x] Add default admin
 - [ ] Define DTOs (request/response models aligned with OpenAPI)
 
 ## Auth
