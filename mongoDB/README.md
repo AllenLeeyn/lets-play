@@ -2,6 +2,52 @@
 
 This folder documents how to run **MongoDB** locally for the [Let's Play](../docs/lets-play.md) API. The API uses MongoDB for users and products; identifiers are MongoDB ObjectIds.
 
+## Entities
+
+The API uses two collections. Field names match the API contract; the database stores `_id` (ObjectId), which is exposed as `id` (string) in JSON.
+
+### Collection: `users`
+
+Stores user accounts. Passwords are hashed with BCrypt before storage and are never returned by the API.
+
+| Field      | Type     | Required | Description                                      |
+| ---------- | -------- | -------- | ------------------------------------------------ |
+| `_id`      | ObjectId | yes      | Unique identifier (exposed as `id` in API)       |
+| `name`     | string   | yes      | Display name                                     |
+| `email`    | string   | yes      | Unique; used for sign-in                          |
+| `password` | string   | yes      | BCrypt hash; never included in API responses     |
+| `role`     | string   | yes      | `USER` or `ADMIN`                                 |
+
+- **Signup** (POST /auth/signup) always creates documents with `role: "USER"`.
+- **Admins** are created internally or by another admin via POST /users (not via signup).
+- **Recommended index:** unique on `email` for lookups and to enforce uniqueness.
+
+### Collection: `products`
+
+Stores products. Each product is owned by one user (`userId`).
+
+| Field        | Type     | Required | Description                                      |
+| ------------ | -------- | -------- | ------------------------------------------------ |
+| `_id`        | ObjectId | yes      | Unique identifier (exposed as `id` in API)       |
+| `name`       | string   | yes      | Product name                                     |
+| `description`| string   | no       | Optional description                             |
+| `price`      | double   | yes      | Price (≥ 0)                                      |
+| `quantity`   | integer  | yes      | Stock quantity (≥ 0)                             |
+| `userId`     | ObjectId | yes      | Owner; references `users._id`                    |
+
+- **Relationship:** One user (1) owns many products (n). Stored as `userId` on the product document.
+- **Recommended index:** on `userId` for efficient “products by owner” queries.
+
+### Relationship summary
+
+```
+User (1) ──────────< Product (n)
+   _id                    userId
+```
+
+- List products by owner: query `products` with `{ userId: userObjectId }`.
+- Resolve owner for a product: lookup `users` by `products.userId`.
+
 ## Prerequisites
 
 - [Docker](https://www.docker.com/) (for containerized setup), or
