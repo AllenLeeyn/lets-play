@@ -8,14 +8,14 @@
 ## Schema
 - [x] Define MongoDB entities (User, Product)
 - [x] Add default admin
-- [ ] Define DTOs (request/response models aligned with OpenAPI)
+- [x] Define DTOs (request/response models aligned with OpenAPI)
 
 ## Auth
-- [ ] Add Auth endpoints
-  - [ ] Password hashing with BCrypt
-  - [ ] JWT creation and validation (Spring Security)
-  - [ ] POST /auth/signup
-  - [ ] POST /auth/signin
+- [x] Add Auth endpoints
+  - [x] Password hashing with BCrypt
+  - [x] JWT creation and validation (Spring Security)
+  - [x] POST /auth/signup
+  - [x] POST /auth/signin
 
 ## Users (admin only)
 - [ ] Add Users endpoints
@@ -43,3 +43,4 @@
 ## Security
 - [ ] Exclude password (and other sensitive fields) from all API responses
 - [ ] Validate and sanitize inputs (e.g. prevent injection)
+- [ ] Implement HTTPS
