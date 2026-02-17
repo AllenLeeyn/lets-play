@@ -36,11 +36,11 @@
   - [ ] DELETE /products/{id}
 
 ## Error handling
-- [ ] Global exception handler
-- [ ] Standard error response format `{ "message", "status" }` (per OpenAPI)
-- [ ] Map exceptions to appropriate status codes (400, 401, 403, 404, 409)
+- [x] Global exception handler
+- [x] Standard error response format `{ "message", "status" }` (per OpenAPI)
+- [x] Map exceptions to appropriate status codes (400, 401, 403, 404, 409)
 
 ## Security
-- [ ] Exclude password (and other sensitive fields) from all API responses
+- [x] Exclude password (and other sensitive fields) from all API responses
 - [ ] Validate and sanitize inputs (e.g. prevent injection)
 - [ ] Implement HTTPS

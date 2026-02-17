@@ -4,9 +4,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.lets_play.DTO.AuthResponse;
-import com.example.lets_play.DTO.SigninRequest;
-import com.example.lets_play.DTO.SignupRequest;
+import com.example.lets_play.dto.AuthResponse;
+import com.example.lets_play.dto.SigninRequest;
+import com.example.lets_play.dto.SignupRequest;
 import com.example.lets_play.model.User;
 import com.example.lets_play.repository.UserRepository;
 
