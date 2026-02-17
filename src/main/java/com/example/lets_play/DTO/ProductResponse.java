@@ -1,4 +1,4 @@
-package com.example.lets_play.DTO;
+package com.example.lets_play.dto;
 
 public class ProductResponse {
 
@@ -8,6 +8,8 @@ public class ProductResponse {
     private double price;
     private int quantity;
     private String userId;
+
+    public ProductResponse() {}
 
     public ProductResponse(String id, String name, String description, double price, int quantity, String userId) {
         this.id = id;

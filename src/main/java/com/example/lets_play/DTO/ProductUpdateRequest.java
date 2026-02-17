@@ -1,4 +1,4 @@
-package com.example.lets_play.DTO;
+package com.example.lets_play.dto;
 
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;

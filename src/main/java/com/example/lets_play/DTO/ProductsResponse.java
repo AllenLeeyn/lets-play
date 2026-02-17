@@ -1,4 +1,4 @@
-package com.example.lets_play.DTO;
+package com.example.lets_play.dto;
 
 import java.util.List;
 
@@ -9,6 +9,8 @@ public class ProductsResponse {
     private int totalPages;
     private int size;
     private int number;
+
+    public ProductsResponse() {}
 
     public ProductsResponse(List<ProductResponse> content, long totalElements, int totalPages, int size, int number) {
         this.content = content;

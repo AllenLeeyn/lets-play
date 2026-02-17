@@ -1,4 +1,4 @@
-package com.example.lets_play.DTO;
+package com.example.lets_play.dto;
 
 public class UserResponse {
 
@@ -6,6 +6,8 @@ public class UserResponse {
     private String name;
     private String email;
     private String role;
+
+    public UserResponse() {}
 
     public UserResponse(String id, String name, String email, String role) {
         this.id = id;
@@ -40,5 +42,9 @@ public class UserResponse {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

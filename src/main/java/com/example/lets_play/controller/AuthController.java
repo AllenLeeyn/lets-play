@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.lets_play.DTO.AuthResponse;
-import com.example.lets_play.DTO.Error;
-import com.example.lets_play.DTO.SigninRequest;
-import com.example.lets_play.DTO.SignupRequest;
+import com.example.lets_play.dto.AuthResponse;
+import com.example.lets_play.dto.Error;
+import com.example.lets_play.dto.SigninRequest;
+import com.example.lets_play.dto.SignupRequest;
 import com.example.lets_play.service.AuthService;
 
 import jakarta.validation.Valid;

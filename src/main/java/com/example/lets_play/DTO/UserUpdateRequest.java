@@ -1,4 +1,4 @@
-package com.example.lets_play.DTO;
+package com.example.lets_play.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -48,5 +48,10 @@ public class UserUpdateRequest {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    /** True if at least one field was provided (for PUT /users/{id} "at least one required"). */
+    public boolean hasAnyField() {
+        return name != null || email != null || password != null || role != null;
     }
 }
