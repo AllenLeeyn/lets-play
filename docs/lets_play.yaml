@@ -28,7 +28,7 @@ paths:
       summary: Sign up
       description: |
         Creates a new user with role **USER**. Password is hashed with BCrypt before storage.
-        Returns a JWT in the response body; use it in the **Authorization** header as `Bearer <token>` for subsequent requests.
+        Returns a JWT in the response body; send it in the **Authorization** header as `Bearer <token>` on subsequent requests.
         Admin users are not created via signup; they are defined internally or created by another admin via POST /api/users.
       operationId: signup
       requestBody:
@@ -39,7 +39,7 @@ paths:
               $ref: '#/components/schemas/SignupRequest'
       responses:
         '201':
-          description: User created; returns JWT for immediate use.
+          description: User created; returns JWT in response body.
           content:
             application/json:
               schema:
@@ -62,7 +62,7 @@ paths:
       tags: [Auth]
       summary: Sign in
       description: |
-        **Success**: returns 200 with a JWT in the response body. Client must send this token in the **Authorization** header as `Bearer <token>` on subsequent requests. Using the header (not a cookie) is the standard for APIs and avoids CSRF and cross-origin cookie issues.
+        **Success**: returns 200 with a JWT in the response body. Send it in the **Authorization** header as `Bearer <token>` on subsequent requests.
         **Failure**: returns 401 with the standard error body (e.g. invalid email or password).
       operationId: signin
       requestBody:
@@ -73,7 +73,7 @@ paths:
               $ref: '#/components/schemas/SigninRequest'
       responses:
         '200':
-          description: Sign-in successful; use the returned token in Authorization header.
+          description: Sign-in successful; returns JWT in response body.
           content:
             application/json:
               schema:
@@ -85,7 +85,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /users:
+  /api/users:
     get:
       tags: [Users]
       summary: List all users
@@ -144,7 +144,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /users/{id}:
+  /api/users/{id}:
     parameters:
       - $ref: '#/components/parameters/UserId'
     get:
@@ -222,7 +222,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /products:
+  /api/products:
     get:
       tags: [Products]
       summary: List all products
@@ -285,7 +285,7 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 
-  /products/{id}:
+  /api/products/{id}:
     parameters:
       - $ref: '#/components/parameters/ProductId'
     get:
@@ -357,7 +357,7 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: JWT obtained from POST /api/auth/signin. Send in Authorization header as Bearer <token> (not in a cookie).
+      description: JWT returned in response body from signin/signup. Send in Authorization header as Bearer <token>.
 
   parameters:
     UserId:
@@ -461,7 +461,7 @@ components:
 
     UserCreate:
       type: object
-      description: Used by admin only (POST /users). May set role USER or ADMIN.
+      description: Used by admin only (POST /api/users). May set role USER or ADMIN.
       properties:
         name:
           type: string
@@ -480,7 +480,7 @@ components:
 
     UserUpdate:
       type: object
-      description: At least one field must be provided for PUT /users/{id}.
+      description: At least one field must be provided for PUT /api/users/{id}.
       properties:
         name:
           type: string
@@ -498,7 +498,7 @@ components:
 
     Products:
       type: object
-      description: Paginated response for GET /products.
+      description: Paginated response for GET /api/products.
       properties:
         content:
           type: array
@@ -566,7 +566,7 @@ components:
 
     ProductUpdate:
       type: object
-      description: At least one field must be provided for PUT /products/{id}.
+      description: At least one field must be provided for PUT /api/products/{id}.
       properties:
         name:
           type: string
