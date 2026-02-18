@@ -42,5 +42,6 @@
 
 ## Security
 - [x] Exclude password (and other sensitive fields) from all API responses
-- [ ] Validate and sanitize inputs (e.g. prevent injection)
 - [ ] Implement HTTPS
+- [ ] Implement CORS
+- [ ] Implement rate-limiting
