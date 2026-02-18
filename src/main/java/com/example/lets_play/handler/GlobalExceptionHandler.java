@@ -1,19 +1,18 @@
 package com.example.lets_play.handler;
 
-import org.springframework.dao.DataAccessResourceFailureException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 
 import com.example.lets_play.dto.Error;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Global exception handler for all REST controllers.
@@ -72,15 +71,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Error> handleAccessDenied(AccessDeniedException e) {
         return error(HttpStatus.FORBIDDEN, e.getMessage());
-    }
-
-    /**
-     * Handles database connection failures (e.g. MongoDB unreachable or timeout).
-     * Returns 404 Not Found; details are logged by the framework.
-     */
-    @ExceptionHandler(DataAccessResourceFailureException.class)
-    public ResponseEntity<Error> handleDataAccessResourceFailure(DataAccessResourceFailureException e) {
-        return error(HttpStatus.NOT_FOUND, "Resource not found");
     }
 
     /**

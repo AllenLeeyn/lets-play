@@ -45,7 +45,7 @@ public class AdminSeedRunner implements  ApplicationRunner{
         User admin = new User();
         admin.setEmail(adminEmail);
         admin.setName(adminName);
-        admin.setRole(User.Role.ADMIN.name());
+        admin.setRole(User.Role.ADMIN);
         admin.setPassword(passwordEncoder.encode(adminPassword));
 
         try {

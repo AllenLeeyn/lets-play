@@ -1,7 +1,5 @@
 package com.example.lets_play.dto;
 
-import com.example.lets_play.model.User;
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -21,8 +19,9 @@ public class UserCreateRequest {
     @Size(min = 6) 
     private String password;
 
+    @NotBlank(message = "Role is required")
     @Pattern(regexp = "^(USER|ADMIN)$", message = "Role must be USER or ADMIN")
-    private String role = User.Role.USER.name();
+    private String role = "USER";
 
     public String getName() {
         return name;
