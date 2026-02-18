@@ -8,4 +8,6 @@ import org.springframework.data.domain.Pageable;
 public interface ProductRepository extends MongoRepository<Product, String> {
 
     Page<Product> findByUserId(String userId, Pageable pageable);
+
+    void deleteByUserId(String userId);
 }

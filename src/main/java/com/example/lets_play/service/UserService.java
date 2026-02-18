@@ -22,12 +22,15 @@ public class UserService {
     private static final String OBJECT_ID_PATTERN = "^[a-fA-F0-9]{24}$";
 
     private final UserRepository userRepository;
+    private final ProductService productService;
     private final PasswordEncoder passwordEncoder;
     private final String defaultAdminEmail;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+    public UserService(UserRepository userRepository, ProductService productService,
+                       PasswordEncoder passwordEncoder,
                        @Value("${admin.seed.email}") String defaultAdminEmail) {
         this.userRepository = userRepository;
+        this.productService = productService;
         this.passwordEncoder = passwordEncoder;
         this.defaultAdminEmail = defaultAdminEmail != null ? defaultAdminEmail.trim().toLowerCase() : null;
     }
@@ -63,32 +66,46 @@ public class UserService {
     }
 
     /** Admin or self (enforced by controller @PreAuthorize). Admins may update USER or self only; cannot update another admin. At least one field required. */
-    public UserResponse updateUser(String id, UserUpdateRequest request, boolean isSelf) {
+    public UserResponse updateUser(String id, UserUpdateRequest request, User currentUser) {
         validateObjectId(id);
         if (!request.hasAnyField()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "At least one field must be provided");
         }
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        boolean isSelf = currentUser.getId().equals(id);
+        boolean isDefaultAdmin = defaultAdminEmail != null && defaultAdminEmail.equals(user.getEmail());
         if (user.getRole() == User.Role.ADMIN && !isSelf) {
             throw new AccessDeniedException("Cannot update another admin");
         }
 
-        if (request.getName() != null) {
-            user.setName(request.getName());
-        }
-        if (request.getEmail() != null) {
-            String newEmail = request.getEmail().trim().toLowerCase();
-            if (!newEmail.equals(user.getEmail()) && userRepository.existsByEmail(newEmail)) {
-                throw new IllegalStateException("Email already in use");
+        if (isDefaultAdmin) {
+            if (request.getName() != null || request.getEmail() != null || request.getRole() != null) {
+                throw new AccessDeniedException("Only password can be updated for default admin");
             }
-            user.setEmail(newEmail);
-        }
-        if (request.getPassword() != null && !request.getPassword().isBlank()) {
-            user.setPassword(passwordEncoder.encode(request.getPassword()));
-        }
-        if (request.getRole() != null) {
-            user.setRole(parseRoleOrThrow(request.getRole()));
+            if (request.getPassword() != null && !request.getPassword().isBlank()) {
+                user.setPassword(passwordEncoder.encode(request.getPassword()));
+            }
+        } else {
+            if (request.getName() != null) {
+                user.setName(request.getName());
+            }
+            if (request.getEmail() != null) {
+                String newEmail = request.getEmail().trim().toLowerCase();
+                if (!newEmail.equals(user.getEmail()) && userRepository.existsByEmail(newEmail)) {
+                    throw new IllegalStateException("Email already in use");
+                }
+                user.setEmail(newEmail);
+            }
+            if (request.getPassword() != null && !request.getPassword().isBlank()) {
+                user.setPassword(passwordEncoder.encode(request.getPassword()));
+            }
+            if (request.getRole() != null) {
+                if (currentUser.getRole() != User.Role.ADMIN) {
+                    throw new AccessDeniedException("Only admin can update role");
+                }
+                user.setRole(parseRoleOrThrow(request.getRole()));
+            }
         }
 
         user = userRepository.save(user);
@@ -106,6 +123,7 @@ public class UserService {
         if (user.getRole() == User.Role.ADMIN && !isSelf) {
             throw new AccessDeniedException("Cannot delete another admin");
         }
+        productService.deleteByUserId(id);
         userRepository.deleteById(id);
     }
 

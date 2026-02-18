@@ -73,4 +73,23 @@ public class SecurityService {
         if (!(principal instanceof User)) return false;
         return userId.equals(((User) principal).getId());
     }
+
+    /**
+     * Returns the current authenticated user, or empty if not authenticated.
+     */
+    public Optional<User> getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || !(auth.getPrincipal() instanceof User)) {
+            return Optional.empty();
+        }
+        return Optional.of((User) auth.getPrincipal());
+    }
+
+    /**
+     * Returns the current authenticated user, or throws AccessDeniedException if not authenticated.
+     */
+    public User getCurrentUserOrThrow() {
+        return getCurrentUser()
+                .orElseThrow(() -> new org.springframework.security.access.AccessDeniedException("Authentication required"));
+    }
 }

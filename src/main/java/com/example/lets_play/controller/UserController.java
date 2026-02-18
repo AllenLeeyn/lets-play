@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.lets_play.dto.UserCreateRequest;
+import com.example.lets_play.model.User;
 import com.example.lets_play.dto.UserResponse;
 import com.example.lets_play.dto.UserUpdateRequest;
 import com.example.lets_play.service.SecurityService;
@@ -24,7 +25,8 @@ import jakarta.validation.Valid;
 
 /**
  * User management endpoints. All require authentication.
- * - GET /users, POST /users: admin only.
+ * - GET /users: admin returns all users; USER returns only self.
+ * - POST /users: admin only.
  * - GET /users/{id}, PUT /users/{id}, DELETE /users/{id}: admin or account owner only.
  */
 @RestController
@@ -40,9 +42,13 @@ public class UserController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public List<UserResponse> listUsers() {
-        return userService.listUsers();
+        User current = securityService.getCurrentUserOrThrow();
+        if (current.getRole() == User.Role.ADMIN) {
+            return userService.listUsers();
+        }
+        return List.of(userService.getUserById(current.getId()));
     }
 
     @PostMapping
@@ -63,7 +69,7 @@ public class UserController {
     public ResponseEntity<UserResponse> updateUser(
             @PathVariable String id,
             @Valid @RequestBody UserUpdateRequest request) {
-        return ResponseEntity.ok(userService.updateUser(id, request, securityService.isCurrentUser(id)));
+        return ResponseEntity.ok(userService.updateUser(id, request, securityService.getCurrentUserOrThrow()));
     }
 
     @DeleteMapping("/{id}")
