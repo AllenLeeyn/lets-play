@@ -10,6 +10,11 @@ import com.example.lets_play.dto.SignupRequest;
 import com.example.lets_play.model.User;
 import com.example.lets_play.repository.UserRepository;
 
+/**
+ * Signup and signin. Signup creates a user with role USER and returns a JWT; signin validates credentials and returns a JWT.
+ * <p>
+ * Setup: none; uses {@link JwtService} and {@link org.springframework.security.crypto.password.PasswordEncoder}.
+ */
 @Service
 public class AuthService {
 

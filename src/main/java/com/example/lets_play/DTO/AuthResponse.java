@@ -1,5 +1,8 @@
 package com.example.lets_play.dto;
 
+/**
+ * Response body for signin and signup. Client sends {@code token} in Authorization header as {@code Bearer <token>}.
+ */
 public class AuthResponse {
 
     private String token;

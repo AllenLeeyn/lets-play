@@ -25,9 +25,12 @@ import jakarta.validation.Valid;
 
 /**
  * User management endpoints. All require authentication.
- * - GET /users: admin returns all users; USER returns only self.
- * - POST /users: admin only.
- * - GET /users/{id}, PUT /users/{id}, DELETE /users/{id}: admin or account owner only.
+ * <ul>
+ *   <li>GET /users: admin returns all users; USER returns only self.</li>
+ *   <li>POST /users: admin only.</li>
+ *   <li>GET /users/{id}, PUT /users/{id}, DELETE /users/{id}: admin or account owner only.</li>
+ * </ul>
+ * Setup: none.
  */
 @RestController
 @RequestMapping("/api/users")
@@ -41,6 +44,7 @@ public class UserController {
         this.securityService = securityService;
     }
 
+    /** List users: ADMIN gets all; USER gets only themselves. */
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     public List<UserResponse> listUsers() {
@@ -51,6 +55,7 @@ public class UserController {
         return List.of(userService.getUserById(current.getId()));
     }
 
+    /** Create a user (admin only). Returns 201; 409 if email already registered. */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserCreateRequest request) {
@@ -58,12 +63,14 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    /** Get user by id. Admin or self only. */
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or @securityService.isCurrentUser(#id)")
     public ResponseEntity<UserResponse> getUserById(@PathVariable String id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
+    /** Update user. Admin or self only; default admin can only change password. */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or @securityService.isCurrentUser(#id)")
     public ResponseEntity<UserResponse> updateUser(
@@ -72,6 +79,7 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(id, request, securityService.getCurrentUserOrThrow()));
     }
 
+    /** Delete user and their products. Admin or self only; default admin cannot be deleted. */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or @securityService.isCurrentUser(#id)")
     public ResponseEntity<Void> deleteUser(@PathVariable String id) {

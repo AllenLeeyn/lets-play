@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+/**
+ * Request body for POST /api/users (admin-only). All fields required; validated with Bean Validation.
+ */
 public class UserCreateRequest {
 
     @NotBlank(message = "Name is required")

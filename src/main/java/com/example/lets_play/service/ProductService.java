@@ -19,6 +19,12 @@ import com.example.lets_play.model.Product;
 import com.example.lets_play.model.User;
 import com.example.lets_play.repository.ProductRepository;
 
+/**
+ * Product CRUD and listing. Access rules (public vs authenticated, owner/admin) are enforced by controllers;
+ * this service performs owner-or-admin checks for update/delete and uses {@link User} for the current caller.
+ * <p>
+ * Setup: none.
+ */
 @Service
 public class ProductService {
 

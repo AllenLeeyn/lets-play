@@ -1,5 +1,8 @@
 package com.example.lets_play.dto;
 
+/**
+ * User data returned by API (list, get, create, update). Password is never included.
+ */
 public class UserResponse {
 
     private String id;

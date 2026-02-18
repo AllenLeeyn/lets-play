@@ -8,13 +8,18 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+/**
+ * Configures Cross-Origin Resource Sharing (CORS) for the API.
+ * Allows browser clients on other origins (e.g. Swagger UI, frontend on another port) to call
+ * /api/** with credentials. For production, replace {@code allowedOriginPatterns("*")} with a list
+ * of specific origins (e.g. your frontend URL).
+ */
 @Configuration
 public class CorsConfig {
 
     /**
-     * Allow cross-origin requests so Swagger UI "Try it out" (and other browser clients)
-     * can call the API when the UI is served from a different origin (e.g. editor
-     * extension, file://, or another port). For production, restrict allowedOrigins.
+     * Registers CORS for /api/**: any origin, common HTTP methods, all headers, credentials allowed.
+     * Used by SecurityConfig via {@code .cors(cors -> {})}.
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

@@ -18,6 +18,9 @@ import com.example.lets_play.dto.Error;
  * Global exception handler for all REST controllers.
  * Converts thrown exceptions into a consistent {@link Error} response body with
  * appropriate HTTP status codes, as defined in the OpenAPI spec.
+ * <p>
+ * Setup: none. As a {@link org.springframework.web.bind.annotation.RestControllerAdvice}, it applies automatically
+ * to all controllers; no registration required.
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -93,7 +96,7 @@ public class GlobalExceptionHandler {
         return error(HttpStatus.NOT_FOUND, "Resource not found");
     }
 
-    /** Builds a response with the standard Error body. */
+    /** Builds a response with the standard {@link Error} body (message and status code). */
     private static ResponseEntity<Error> error(HttpStatus status, String message) {
         return ResponseEntity
                 .status(status)

@@ -4,6 +4,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+/**
+ * Request body for POST /api/auth/signin. Email and password required for authentication.
+ */
 public class SigninRequest {
 
     @NotBlank(message = "Email is required")

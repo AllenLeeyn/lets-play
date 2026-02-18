@@ -1,5 +1,8 @@
 package com.example.lets_play.dto;
 
+/**
+ * Standard error response body for 4xx responses. Used by {@link com.example.lets_play.handler.GlobalExceptionHandler}.
+ */
 public class Error {
 
     private String message;

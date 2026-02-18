@@ -4,6 +4,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+/**
+ * Request body for PUT /api/users/{id}. All fields optional; at least one must be provided (enforced in service).
+ * Use {@link #hasAnyField()} to check.
+ */
 public class UserUpdateRequest {
 
     @Size(min = 1, max = 255)

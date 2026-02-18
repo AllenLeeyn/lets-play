@@ -12,6 +12,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.example.lets_play.filter.JwtAuthenticationFilter;
 
+/**
+ * Configures HTTP security and request authorization.
+ * <ul>
+ *   <li>Uses JWT for authentication (no sessions).</li>
+ *   <li>Public: signin, signup, GET products (list and by id), OPTIONS.</li>
+ *   <li>All other /api/** require a valid JWT; method-level rules (e.g. admin-only) use {@code @PreAuthorize}.</li>
+ * </ul>
+ * Setup: ensure {@link JwtAuthenticationFilter} is registered so the JWT is validated and the security context is set.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
@@ -23,6 +32,10 @@ public class SecurityConfig {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
+    /**
+     * Defines the security filter chain: CORS (from CorsConfig), no CSRF (stateless API),
+     * stateless sessions, public vs authenticated paths, and JWT filter before Spring Security's username/password filter.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http

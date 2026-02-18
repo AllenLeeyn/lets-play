@@ -4,6 +4,10 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**
+ * User entity stored in MongoDB collection {@code users}.
+ * Id is MongoDB ObjectId (24-char hex). Email is unique. Password is stored BCrypt-hashed; never exposed in API responses.
+ */
 @Document(collection = "users")
 public class User {
 
@@ -11,13 +15,14 @@ public class User {
     private String id;
 
     private String name;
-    
+
     @Indexed(unique = true)
     private String email;
     private String password;
     private Role role;
 
-    public enum Role { USER, ADMIN}
+    /** User role: USER (normal) or ADMIN. */
+    public enum Role { USER, ADMIN }
 
     public User() {
     }

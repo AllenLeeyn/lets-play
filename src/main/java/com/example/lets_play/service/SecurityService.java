@@ -15,6 +15,12 @@ import com.example.lets_play.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 
+/**
+ * JWT validation (with user lookup and claim consistency), current-user helpers, and conversion to Spring Security
+ * {@link Authentication}. Used by {@link com.example.lets_play.filter.JwtAuthenticationFilter} and controllers.
+ * <p>
+ * Setup: none; depends on {@link JwtService} and {@link UserRepository}.
+ */
 @Service
 public class SecurityService {
 
@@ -26,6 +32,7 @@ public class SecurityService {
         this.userRepository = userRepository;
     }
 
+    /** Validates JWT, loads user by subject id, and checks email/role match claims; returns empty if invalid or user missing. */
     public Optional<User> validateTokenAndLoadUser(String token) {
         try {
             Claims claims = jwtService.getClaims(token);
@@ -52,6 +59,7 @@ public class SecurityService {
         }
     }
 
+    /** Converts a valid token into an {@link Authentication} with principal=User and ROLE_* authority. */
     public Optional<Authentication> getAuthentication(String token) {
         return validateTokenAndLoadUser(token)
             .map(user -> {

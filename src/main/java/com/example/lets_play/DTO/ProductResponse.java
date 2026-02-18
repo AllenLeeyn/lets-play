@@ -1,5 +1,8 @@
 package com.example.lets_play.dto;
 
+/**
+ * Product data returned by API (list, get, create, update). Includes owner {@code userId}.
+ */
 public class ProductResponse {
 
     private String id;

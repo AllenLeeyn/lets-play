@@ -25,9 +25,12 @@ import jakarta.validation.Valid;
 
 /**
  * Product catalog and management.
- * - GET /products, GET /products/{id}: public.
- * - POST /products: USER role only; product is owned by current user.
- * - PUT /products/{id}, DELETE /products/{id}: authenticated; owner or admin only.
+ * <ul>
+ *   <li>GET /products, GET /products/{id}: public.</li>
+ *   <li>POST /products: USER role only; product is owned by current user.</li>
+ *   <li>PUT /products/{id}, DELETE /products/{id}: authenticated; owner or admin only.</li>
+ * </ul>
+ * Setup: none.
  */
 @RestController
 @RequestMapping("/api/products")
@@ -41,6 +44,7 @@ public class ProductController {
         this.securityService = securityService;
     }
 
+    /** List products with optional userId filter and pagination (page, size). Public. */
     @GetMapping
     public ProductsResponse listProducts(
             @RequestParam(required = false) String userId,
@@ -49,6 +53,7 @@ public class ProductController {
         return productService.listProducts(userId, page, size);
     }
 
+    /** Create a product owned by the current user. USER role only. Returns 201. */
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductCreateRequest request) {
@@ -57,11 +62,13 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    /** Get product by id. Public. */
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> getProductById(@PathVariable String id) {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
+    /** Update product. Owner or admin only; at least one field required. */
     @PutMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ProductResponse> updateProduct(
@@ -71,6 +78,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.updateProduct(id, request, currentUser));
     }
 
+    /** Delete product. Owner or admin only. Returns 204. */
     @DeleteMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteProduct(@PathVariable String id) {

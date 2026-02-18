@@ -4,6 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
+/**
+ * Request body for POST /api/products. Name, price, quantity required; description optional. Owner is set from current user.
+ */
 public class ProductCreateRequest {
 
     @NotBlank(message = "Name is required")

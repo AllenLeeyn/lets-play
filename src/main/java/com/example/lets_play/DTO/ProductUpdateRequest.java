@@ -3,6 +3,10 @@ package com.example.lets_play.dto;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
+/**
+ * Request body for PUT /api/products/{id}. All fields optional; at least one must be provided (enforced in service).
+ * Use {@link #hasAnyField()} to check.
+ */
 public class ProductUpdateRequest {
 
     @Size(min = 1, max = 255)

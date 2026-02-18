@@ -12,8 +12,20 @@ import org.springframework.stereotype.Component;
 import com.example.lets_play.model.User;
 import com.example.lets_play.repository.UserRepository;
 
+/**
+ * Seeds a default ADMIN user on application startup if one does not already exist.
+ * The created user is identified by {@code admin.seed.email}; this same email is used elsewhere
+ * (e.g. UserService) to protect the "default admin" from role change and deletion.
+ * <p>
+ * Setup: set these properties (e.g. in application.yml or env):
+ * <ul>
+ *   <li>{@code admin.seed.email} – email for the default admin (required)</li>
+ *   <li>{@code admin.seed.name} – display name</li>
+ *   <li>{@code admin.seed.password} – plain password; stored hashed. Change after first login in non-dev.</li>
+ * </ul>
+ */
 @Component
-public class AdminSeedRunner implements  ApplicationRunner{
+public class AdminSeedRunner implements ApplicationRunner {
 
     private static final Logger log = LoggerFactory.getLogger(AdminSeedRunner.class);
 
@@ -28,13 +40,18 @@ public class AdminSeedRunner implements  ApplicationRunner{
 
     @Value("${admin.seed.password}")
     private String adminPassword;
-    
+
     public AdminSeedRunner(UserRepository userRepository,
                            BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Runs after the application context is ready. If no user exists with {@code admin.seed.email},
+     * creates an ADMIN user with the configured name and hashed password; otherwise logs and exits.
+     * Idempotent; on duplicate key (e.g. race with another instance) logs an error.
+     */
     @Override
     public void run(ApplicationArguments args) {
         if (userRepository.existsByEmail(adminEmail)) {

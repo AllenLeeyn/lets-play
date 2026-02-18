@@ -2,6 +2,9 @@ package com.example.lets_play.dto;
 
 import java.util.List;
 
+/**
+ * Paginated response for GET /api/products. Standard page fields: content, totalElements, totalPages, size, number.
+ */
 public class ProductsResponse {
 
     private List<ProductResponse> content;

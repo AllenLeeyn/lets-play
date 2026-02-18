@@ -16,6 +16,12 @@ import com.example.lets_play.dto.UserUpdateRequest;
 import com.example.lets_play.model.User;
 import com.example.lets_play.repository.UserRepository;
 
+/**
+ * User CRUD and business rules. Who may call each method is enforced by controllers via @PreAuthorize;
+ * this service assumes the caller is already authorized. Deletes cascade to products via {@link ProductService#deleteByUserId}.
+ * <p>
+ * Setup: {@code admin.seed.email} (optional) identifies the default admin; that user cannot be deleted and only password can be updated.
+ */
 @Service
 public class UserService {
 

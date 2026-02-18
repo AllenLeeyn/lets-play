@@ -3,6 +3,10 @@ package com.example.lets_play.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**
+ * Product entity stored in MongoDB collection {@code products}.
+ * Id is MongoDB ObjectId. {@code userId} is the owner's user id (products are cascade-deleted when that user is deleted).
+ */
 @Document(collection = "products")
 public class Product {
 
@@ -13,6 +17,7 @@ public class Product {
     private String description;
     private double price;
     private int quantity;
+    /** Owner's user id (MongoDB ObjectId). */
     private String userId;
     
     public Product() {

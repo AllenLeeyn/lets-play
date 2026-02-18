@@ -4,6 +4,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+/**
+ * Request body for POST /api/auth/signup. Creates a user with role USER. All fields required.
+ */
 public class SignupRequest {
 
     @NotBlank(message = "Name is required")
