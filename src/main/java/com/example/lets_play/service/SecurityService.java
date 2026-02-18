@@ -3,6 +3,7 @@ package com.example.lets_play.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -40,7 +41,8 @@ public class SecurityService {
             String tokenEmail = claims.get("email", String.class);
             String tokenRole = claims.get("role", String.class);
 
-            if (!user.getEmail().equals(tokenEmail) || !user.getRole().equals(tokenRole)) {
+            String userRole = user.getRole().name();
+            if (!user.getEmail().equals(tokenEmail) || !userRole.equals(tokenRole)) {
                 return Optional.empty();
             }
 
@@ -53,11 +55,22 @@ public class SecurityService {
     public Optional<Authentication> getAuthentication(String token) {
         return validateTokenAndLoadUser(token)
             .map(user -> {
-                String role = user.getRole();
+                String role = user.getRole().name();
                 var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
 
                 return new UsernamePasswordAuthenticationToken(
                     user, null, authorities);
             });
+    }
+
+    /**
+     * Returns true if the current authenticated user's id equals the given userId.
+     * Used for @PreAuthorize to allow admin or account owner only.
+     */
+    public boolean isCurrentUser(String userId) {
+        if (userId == null) return false;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!(principal instanceof User)) return false;
+        return userId.equals(((User) principal).getId());
     }
 }
