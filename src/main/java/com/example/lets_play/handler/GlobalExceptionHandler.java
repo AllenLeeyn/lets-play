@@ -1,5 +1,6 @@
 package com.example.lets_play.handler;
 
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -8,8 +9,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
 import com.example.lets_play.dto.Error;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Global exception handler for all REST controllers.
@@ -18,6 +22,8 @@ import com.example.lets_play.dto.Error;
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
      * Handles failed authentication (e.g. invalid email or password on signin).
@@ -35,6 +41,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<Error> handleConflict(IllegalStateException e) {
         return error(HttpStatus.CONFLICT, e.getMessage());
+    }
+
+    /**
+     * Handles malformed request body (e.g. invalid JSON, trailing comma, wrong structure).
+     * Returns 400 Bad Request.
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Error> handleMessageNotReadable(HttpMessageNotReadableException e) {
+        return error(HttpStatus.BAD_REQUEST, "Malformed JSON or invalid request body");
     }
 
     /**
@@ -60,6 +75,15 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles database connection failures (e.g. MongoDB unreachable or timeout).
+     * Returns 404 Not Found; details are logged by the framework.
+     */
+    @ExceptionHandler(DataAccessResourceFailureException.class)
+    public ResponseEntity<Error> handleDataAccessResourceFailure(DataAccessResourceFailureException e) {
+        return error(HttpStatus.NOT_FOUND, "Resource not found");
+    }
+
+    /**
      * Handles {@link ResponseStatusException} (e.g. 404 for missing resource).
      * Preserves the exception's status code and reason in the response body.
      */
@@ -67,6 +91,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Error> handleResponseStatus(ResponseStatusException e) {
         HttpStatus status = HttpStatus.valueOf(e.getStatusCode().value());
         return error(status, e.getReason() != null ? e.getReason() : status.getReasonPhrase());
+    }
+
+    /**
+     * Catch-all for any exception not handled above (undocumented or unexpected).
+     * Returns 404 so the API avoids 5xx per project spec; full exception is logged for debugging.
+     */
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Error> handleAny(Exception e) {
+        log.error("Unhandled exception", e);
+        return error(HttpStatus.NOT_FOUND, "Resource not found");
     }
 
     /** Builds a response with the standard Error body. */
