@@ -42,6 +42,6 @@
 
 ## Security
 - [x] Exclude password (and other sensitive fields) from all API responses
-- [ ] Implement HTTPS
-- [ ] Implement CORS
+- [X] Implement HTTPS
+- [X] Implement CORS
 - [ ] Implement rate-limiting
