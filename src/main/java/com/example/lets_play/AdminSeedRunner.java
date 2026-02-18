@@ -2,6 +2,7 @@ package com.example.lets_play;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -29,8 +30,11 @@ public class AdminSeedRunner implements ApplicationRunner {
 
     private static final Logger log = LoggerFactory.getLogger(AdminSeedRunner.class);
 
-    private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Value("${admin.seed.email}")
     private String adminEmail;
@@ -40,12 +44,6 @@ public class AdminSeedRunner implements ApplicationRunner {
 
     @Value("${admin.seed.password}")
     private String adminPassword;
-
-    public AdminSeedRunner(UserRepository userRepository,
-                           BCryptPasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     /**
      * Runs after the application context is ready. If no user exists with {@code admin.seed.email},

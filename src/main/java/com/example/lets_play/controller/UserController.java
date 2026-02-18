@@ -2,6 +2,7 @@ package com.example.lets_play.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.lets_play.dto.UserCreateRequest;
-import com.example.lets_play.model.User;
 import com.example.lets_play.dto.UserResponse;
 import com.example.lets_play.dto.UserUpdateRequest;
+import com.example.lets_play.model.User;
 import com.example.lets_play.service.SecurityService;
 import com.example.lets_play.service.UserService;
 
@@ -36,13 +37,11 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final UserService userService;
-    private final SecurityService securityService;
-
-    public UserController(UserService userService, SecurityService securityService) {
-        this.userService = userService;
-        this.securityService = securityService;
-    }
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private SecurityService securityService;
 
     /** List users: ADMIN gets all; USER gets only themselves. */
     @GetMapping

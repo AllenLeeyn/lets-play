@@ -3,10 +3,11 @@ package com.example.lets_play.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.example.lets_play.model.User;
@@ -24,13 +25,11 @@ import io.jsonwebtoken.JwtException;
 @Service
 public class SecurityService {
 
-    private final JwtService jwtService;
-    private final UserRepository userRepository;
+    @Autowired
+    private JwtService jwtService;
 
-    public SecurityService(JwtService jwtService, UserRepository userRepository) {
-        this.jwtService = jwtService;
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private UserRepository userRepository;
 
     /** Validates JWT, loads user by subject id, and checks email/role match claims; returns empty if invalid or user missing. */
     public Optional<User> validateTokenAndLoadUser(String token) {

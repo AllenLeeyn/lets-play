@@ -1,5 +1,6 @@
 package com.example.lets_play.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,13 +37,11 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/products")
 public class ProductController {
 
-    private final ProductService productService;
-    private final SecurityService securityService;
-
-    public ProductController(ProductService productService, SecurityService securityService) {
-        this.productService = productService;
-        this.securityService = securityService;
-    }
+    @Autowired
+    private ProductService productService;
+    
+    @Autowired
+    private SecurityService securityService;
 
     /** List products with optional userId filter and pagination (page, size). Public. */
     @GetMapping

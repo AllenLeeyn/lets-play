@@ -3,6 +3,7 @@ package com.example.lets_play.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,11 +32,8 @@ public class ProductService {
     private static final String OBJECT_ID_PATTERN = "^[a-fA-F0-9]{24}$";
     private static final int MAX_PAGE_SIZE = 100;
 
-    private final ProductRepository productRepository;
-
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
+    @Autowired
+    private ProductRepository productRepository;
 
     /**
      * List products with optional owner filter and pagination.

@@ -1,5 +1,9 @@
 package com.example.lets_play.filter;
 
+import java.io.IOException;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -11,9 +15,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
-import java.util.Optional;
 
 /**
  * Runs once per request and authenticates the caller using a JWT from the {@code Authorization: Bearer <token>} header.
@@ -28,11 +29,8 @@ import java.util.Optional;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final SecurityService securityService;
-
-    public JwtAuthenticationFilter(SecurityService securityService) {
-        this.securityService = securityService;
-    }
+    @Autowired
+    private SecurityService securityService;
 
     /**
      * Extracts a Bearer token from the request; if present and valid, sets the authentication on the security context, then continues the chain.

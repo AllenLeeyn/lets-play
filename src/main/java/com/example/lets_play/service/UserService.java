@@ -3,6 +3,7 @@ package com.example.lets_play.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -27,19 +28,17 @@ public class UserService {
 
     private static final String OBJECT_ID_PATTERN = "^[a-fA-F0-9]{24}$";
 
-    private final UserRepository userRepository;
-    private final ProductService productService;
-    private final PasswordEncoder passwordEncoder;
-    private final String defaultAdminEmail;
+    @Autowired
+    private UserRepository userRepository;
 
-    public UserService(UserRepository userRepository, ProductService productService,
-                       PasswordEncoder passwordEncoder,
-                       @Value("${admin.seed.email}") String defaultAdminEmail) {
-        this.userRepository = userRepository;
-        this.productService = productService;
-        this.passwordEncoder = passwordEncoder;
-        this.defaultAdminEmail = defaultAdminEmail != null ? defaultAdminEmail.trim().toLowerCase() : null;
-    }
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
+    @Value("${admin.seed.email}")
+    private String defaultAdminEmail;
 
     /** Admin only. Returns all users (no password in response). */
     public List<UserResponse> listUsers() {
@@ -80,7 +79,8 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
         boolean isSelf = currentUser.getId().equals(id);
-        boolean isDefaultAdmin = defaultAdminEmail != null && defaultAdminEmail.equals(user.getEmail());
+        String normalizedAdminEmail = defaultAdminEmail != null ? defaultAdminEmail.trim().toLowerCase() : null;
+        boolean isDefaultAdmin = normalizedAdminEmail != null && normalizedAdminEmail.equals(user.getEmail());
         if (user.getRole() == User.Role.ADMIN && !isSelf) {
             throw new AccessDeniedException("Cannot update another admin");
         }
@@ -123,7 +123,8 @@ public class UserService {
         validateObjectId(id);
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        if (defaultAdminEmail != null && defaultAdminEmail.equals(user.getEmail())) {
+        String normalizedAdminEmail = defaultAdminEmail != null ? defaultAdminEmail.trim().toLowerCase() : null;
+        if (normalizedAdminEmail != null && normalizedAdminEmail.equals(user.getEmail())) {
             throw new AccessDeniedException("Cannot delete default admin");
         }
         if (user.getRole() == User.Role.ADMIN && !isSelf) {
